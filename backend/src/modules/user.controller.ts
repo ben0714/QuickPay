@@ -1,7 +1,19 @@
 import { parseQRCode } from "../utils/utils";
 import { Request, Response } from "express";
+// import { config } from "../config/config";
 import { User, UserAttributes } from "../models/users";
 import { isValidWalletAddress } from "../utils/validation";
+// import { type IVerifyResponse, verifyCloudProof } from "@worldcoin/idkit";
+
+// export default async function identityHandler(req: Request, res: Response) {
+//   const proof = req.body;
+
+//   const app_id = config.worldcoin_app_id as `app_${string}`;
+//   const action = config.worldcoin_action_id as string;
+
+//   const verifyRes = (await verifyCloudProof(proof, app_id, action)) as IVerifyResponse;
+//   return res.status(verifyRes.success ? 200 : 400).send(verifyRes);
+// }
 
 export async function connectWallet(req: Request, res: Response): Promise<Response> {
   try {
