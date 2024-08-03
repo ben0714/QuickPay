@@ -1,3 +1,4 @@
+import { parseQRCode } from "../utils/utils";
 import { Request, Response } from "express";
 import { User, UserAttributes } from "../models/users";
 import { isValidWalletAddress } from "../utils/validation";
@@ -46,5 +47,24 @@ export async function modifyUserInfo(wallet_address: string, score: number): Pro
   } catch (error) {
     console.error("Error getting user: ", error);
     return null;
+  }
+}
+
+export async function qrParser(req: Request, res: Response): Promise<Response> {
+  try {
+    const { qrcode } = req.body;
+
+    const data = parseQRCode(qrcode);
+
+    const transactionInfo = {
+      amount: parseFloat(data["54"]),
+      account_num: parseInt(data["27"].slice(-20)),
+      bank_code: data["27"].slice(22, 30),
+    };
+
+    return res.status(200).json({ message: "qrcode parsed", data: transactionInfo });
+  } catch (error) {
+    console.error("Error parsing QR code: ", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 }
