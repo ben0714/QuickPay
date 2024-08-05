@@ -1,11 +1,11 @@
 import React from 'react';
-import {View, Text, Button, StyleSheet} from 'react-native';
+import {View, Text, Button} from 'react-native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types';
 import {useNavigation} from '@react-navigation/native';
 
-import {useQuery} from '@tanstack/react-query';
-import {useFetch} from '../../react-query/hook';
+// import {useQuery} from '@tanstack/react-query';
+// import {UseFetch} from '../../react-query/hook';
 import {Alert} from 'react-native';
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<
@@ -16,11 +16,11 @@ type HomeScreenNavigationProp = NativeStackNavigationProp<
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
 
-  const data = useQuery({
-    queryKey: ['users'],
-    queryFn: () => useFetch('users'),
-    retry: 3, // Retry failed queries up to 3 times
-  });
+  // const data = useQuery({
+  //   queryKey: ['users'],
+  //   queryFn: () => useFetch('users'),
+  //   retry: 3, // Retry failed queries up to 3 times
+  // });
 
   const handleQrCode = () => {
     navigation.navigate('QRCodeScanner', {

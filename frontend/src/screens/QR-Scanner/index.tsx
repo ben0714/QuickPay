@@ -1,10 +1,9 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Alert, Platform} from 'react-native';
+import {View, Alert, Platform} from 'react-native';
 import {RNCamera, BarCodeReadEvent} from 'react-native-camera';
 import {RootStackParamList} from '../../types';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 type QRCodeScannerScreenRouteProp = RouteProp<
   RootStackParamList,
@@ -17,6 +16,8 @@ const QRCodeScanner: React.FC = () => {
 
   const [hasCameraPermission, setHasCameraPermission] =
     useState<boolean>(false);
+
+  console.log('🚀 ~ hasCameraPermission:', hasCameraPermission);
 
   useEffect(() => {
     const checkPermissions = async () => {
@@ -54,14 +55,6 @@ const QRCodeScanner: React.FC = () => {
   const handleBarCodeRead = (event: BarCodeReadEvent) => {
     onSuccess(event.data);
   };
-
-  if (!hasCameraPermission) {
-    return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>No access to camera</Text>
-      </View>
-    );
-  }
 
   return (
     <View className="flex flex-1 justify-center items-center">

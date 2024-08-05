@@ -3,7 +3,7 @@
     "target": "es5",
     "lib": ["dom", "es2015"],
     "jsx": "react-native",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

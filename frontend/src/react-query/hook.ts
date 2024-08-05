@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = 'https://reqres.in/api/'; // Replace with your API URL
 
-export const useFetch = async (endpoint: string, options?: RequestInit) => {
+export const UseFetch = async (endpoint: string, options?: RequestInit) => {
   try {
     const token = await AsyncStorage.getItem('token');
 
