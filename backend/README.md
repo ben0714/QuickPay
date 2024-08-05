@@ -1,6 +1,6 @@
-# Quickpay Backend
+# quickPay Backend
 
-This directory contains the backend application for Quickpay, powering the web3 frontend and Wallet/Payment solution.
+This directory contains the backend application for QuickPay.
 
 ## Getting Started
 
@@ -18,35 +18,26 @@ npm install
 3. Start the development server:
 
 ```
-npm start
+yarn dev
 ```
 
 4. Run tests:
 
 ```
-npm test
+yarn test
 ```
 
 5. Build for production:
 
 ```
-npm run build
+yarn build
 ```
-
-## Key Features
-
-- RESTful API for DeFi analytics and user management
-- WebSocket support for real-time updates
-- Multi-chain support (Ethereum, Base, etc.)
-- DeFi Opportunity Score calculation
-- Yield farming aggregation
-- Secure authentication and authorization
 
 ## Technology Stack
 
 - Node.js
 - Express.js for API framework
-- MongoDB for database
+- PostgreSQL for database
 - Web3.js and Ethers.js for blockchain interactions
 - Jest for testing
 - Winston for logging
@@ -55,7 +46,6 @@ npm run build
 
 - `NODE_ENV`: Set to 'development', 'test', or 'production'
 - `PORT`: Port number for the server
-- `MONGODB_URI`: MongoDB connection string
 - `JWT_SECRET`: Secret for JWT token generation
 - `ETHEREUM_RPC_URL`: Ethereum node RPC URL
 - `BASE_RPC_URL`: Base network RPC URL
