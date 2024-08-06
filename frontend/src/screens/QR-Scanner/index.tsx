@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {View, Alert, Platform} from 'react-native';
+import {View, Alert, Platform, Text, SafeAreaView, Image} from 'react-native';
 import {RNCamera, BarCodeReadEvent} from 'react-native-camera';
 import {RootStackParamList} from '../../types';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import Button from '../../components/Buttons';
+import BarcodeMask from 'react-native-barcode-mask';
 
 type QRCodeScannerScreenRouteProp = RouteProp<
   RootStackParamList,
@@ -64,9 +66,26 @@ const QRCodeScanner: React.FC = () => {
         captureAudio={false}
         onBarCodeRead={handleBarCodeRead}
       />
-      <View className="absolute h-full w-full bg-black opacity-70 justify-center items-center">
-        <View className="w-40 h-40 border-2 border-white bg-opacity-0" />
-      </View>
+      <SafeAreaView className="absolute bg-gray-500 w-full h-full bg-primaryBlue flex-col justify-between items-center opacity-50">
+        <View className="flex-row w-full items-center justify-center p-8">
+          <Image
+            className="absolute left-3"
+            source={require('../../assets/arrow-left.png')}
+            style={{width: 50, height: 50}}
+          />
+          <Text className="text-white text-base">Scan QR code</Text>
+        </View>
+
+        <View className="w-2/3 aspect-square bg-white opacity-100" />
+
+        <View className="w-full p-4 z-50">
+          <Button
+            text="Confirm"
+            disabled={true}
+            onClick={() => console.log('asdasd')}
+          />
+        </View>
+      </SafeAreaView>
     </View>
   );
 };

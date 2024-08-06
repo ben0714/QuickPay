@@ -7,6 +7,9 @@ import {useNavigation} from '@react-navigation/native';
 // import {useQuery} from '@tanstack/react-query';
 // import {UseFetch} from '../../react-query/hook';
 import {Alert} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import Header from './components/Header';
+import Transactions from './components/Transactions';
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -32,10 +35,16 @@ const HomeScreen: React.FC = () => {
   };
 
   return (
-    <View className="">
-      <Text>Home Screen</Text>
-      <Button title="scan qr code" onPress={handleQrCode} />
-    </View>
+    <>
+      {/* <View className="bg-white"> */}
+      <SafeAreaView className="bg-white">
+        <View className="bg-primaryBlue w-full h-full">
+          <Header title="Home" handleQrCode={handleQrCode} />
+          <Transactions transactions={[]} />
+        </View>
+      </SafeAreaView>
+      {/* </View> */}
+    </>
   );
 };
 
