@@ -8,4 +8,6 @@ routes.post("/qr-parser", UserController.qrParser);
 
 routes.post("/transactions", UserController.transactions);
 
+routes.post("/approve", UserController.transactions);
+
 export default routes;

@@ -1,20 +1,13 @@
+import Web3 from "web3";
 import axios from "axios";
 import { parseQRCode } from "../utils/utils";
 import { Request, Response } from "express";
 import { config } from "../config/config";
 import { User, UserAttributes } from "../models/users";
 import { isValidWalletAddress } from "../utils/validation";
-// import { type IVerifyResponse, verifyCloudProof } from "@worldcoin/idkit";
+import { abi } from "../config/onchain-abi";
 
-// export default async function identityHandler(req: Request, res: Response) {
-//   const proof = req.body;
-
-//   const app_id = config.worldcoin_app_id as `app_${string}`;
-//   const action = config.worldcoin_action_id as string;
-
-//   const verifyRes = (await verifyCloudProof(proof, app_id, action)) as IVerifyResponse;
-//   return res.status(verifyRes.success ? 200 : 400).send(verifyRes);
-// }
+const web3 = new Web3(new Web3.providers.HttpProvider(config.infura_url as string));
 
 export async function connectWallet(req: Request, res: Response): Promise<Response> {
   try {
@@ -73,13 +66,27 @@ export async function qrParser(req: Request, res: Response): Promise<Response> {
       amount: parseFloat(data["54"]),
       account_num: parseInt(data["27"].slice(-20)),
       bank_code: data["27"].slice(22, 30),
+      usdc_amount: 0,
     };
+
+    const usdcAmount = await calculateUsdcAmount(transactionInfo.amount);
+    transactionInfo.usdc_amount = usdcAmount;
 
     return res.status(200).json({ message: "qrcode parsed", data: transactionInfo });
   } catch (error) {
     console.error("Error parsing QR code: ", error);
     return res.status(500).json({ message: "Internal server error" });
   }
+}
+
+async function calculateUsdcAmount(amount: number): Promise<number> {
+  const contract = new web3.eth.Contract(abi, config.contract_address);
+
+  const weiAmount = amount * 10 ** 18;
+  const usdcAmountInWei = BigInt(await contract.methods.calculateUsdcAmount(weiAmount).call());
+  const usdcAmount = Number(usdcAmountInWei) / 10 ** 6;
+
+  return usdcAmount || 0;
 }
 
 export async function transactions(req: Request, res: Response): Promise<Response> {
