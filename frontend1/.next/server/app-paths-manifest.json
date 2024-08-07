@@ -1,4 +1,0 @@
-{
-  "/page": "app/page.js",
-  "/api/rpc/blockscout/route": "app/api/rpc/blockscout/route.js"
-}

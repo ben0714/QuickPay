@@ -1,9 +1,0 @@
-**/node_modules
-**/.serverless
-**/__pycache__
-**/.env
-**/venv/
-**/myenv/
-**/.pyc
-**/dist
-**/.DS_Store
