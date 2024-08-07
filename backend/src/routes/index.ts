@@ -5,9 +5,8 @@ const routes: Router = Router();
 
 routes.post("/connect-wallet", UserController.connectWallet);
 routes.post("/qr-parser", UserController.qrParser);
+routes.post("/transfer", UserController.transfer);
 
 routes.post("/transactions", UserController.transactions);
-
-routes.post("/approve", UserController.transactions);
 
 export default routes;

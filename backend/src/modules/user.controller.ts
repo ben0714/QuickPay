@@ -69,6 +69,10 @@ export async function qrParser(req: Request, res: Response): Promise<Response> {
       usdc_amount: 0,
     };
 
+    if (transactionInfo.amount <= 0 || !transactionInfo.account_num) {
+      return res.status(400).json({ message: "Invalid QR code" });
+    }
+
     const usdcAmount = await calculateUsdcAmount(transactionInfo.amount);
     transactionInfo.usdc_amount = usdcAmount;
 
@@ -83,7 +87,7 @@ async function calculateUsdcAmount(amount: number): Promise<number> {
   const contract = new web3.eth.Contract(abi, config.contract_address);
 
   const weiAmount = amount * 10 ** 18;
-  const usdcAmountInWei = BigInt(await contract.methods.calculateUsdcAmount(weiAmount).call());
+  const usdcAmountInWei = await contract.methods.calculateUsdcAmount(weiAmount).call();
   const usdcAmount = Number(usdcAmountInWei) / 10 ** 6;
 
   return usdcAmount || 0;
@@ -101,6 +105,27 @@ export async function transactions(req: Request, res: Response): Promise<Respons
     return res.status(200).json({ message: "Transaction successful", data: response.data.result });
   } catch (error) {
     console.error("Error processing transaction: ", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export async function transfer(req: Request, res: Response): Promise<Response> {
+  try {
+    const { amount } = req.body;
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: "Invalid amount" });
+    }
+
+    const contract = new web3.eth.Contract(abi, config.contract_address);
+
+    const weiAmount = amount * 10 ** 18;
+    const usdcAmountInWei = await contract.methods.deposit(weiAmount, config.contract_address).call();
+    const usdcAmount = Number(usdcAmountInWei) / 10 ** 6;
+
+    return res.status(200).json({ message: "Transaction successful", data: { usdc_amount: usdcAmount } });
+  } catch (error) {
+    console.error("Error processing approve: ", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 }
