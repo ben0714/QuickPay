@@ -13,4 +13,6 @@ export const config = {
   wallet_address: process.env.WALLET_ADDRESS,
   worldcoin_app_id: process.env.WORLDCOIN_APP_ID,
   worldcoin_action_id: process.env.WORLDCOIN_ACTION_ID,
+  blockscout_api_key: process.env.BLOCKSCOUT_API_KEY,
+  blockscout_api_url: process.env.BLOCKSCOUT_API_URL,
 };

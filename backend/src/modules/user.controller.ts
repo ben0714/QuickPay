@@ -1,6 +1,7 @@
+import axios from "axios";
 import { parseQRCode } from "../utils/utils";
 import { Request, Response } from "express";
-// import { config } from "../config/config";
+import { config } from "../config/config";
 import { User, UserAttributes } from "../models/users";
 import { isValidWalletAddress } from "../utils/validation";
 // import { type IVerifyResponse, verifyCloudProof } from "@worldcoin/idkit";
@@ -77,6 +78,22 @@ export async function qrParser(req: Request, res: Response): Promise<Response> {
     return res.status(200).json({ message: "qrcode parsed", data: transactionInfo });
   } catch (error) {
     console.error("Error parsing QR code: ", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export async function transactions(req: Request, res: Response): Promise<Response> {
+  try {
+    const { walletAddress, offset, limit } = req.body;
+
+    const usdcContractAddress = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"; // USDC contract address
+    const response = await axios.get(
+      `${config.blockscout_api_url}?module=account&action=tokentx&contractaddress=${usdcContractAddress}&address=${walletAddress}&startblock=${offset}&endblock=${limit}&sort=asc`
+    );
+
+    return res.status(200).json({ message: "Transaction successful", data: response.data.result });
+  } catch (error) {
+    console.error("Error processing transaction: ", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 }
