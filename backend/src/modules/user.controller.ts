@@ -123,7 +123,7 @@ export async function transfer(req: Request, res: Response): Promise<Response> {
     const usdcAmountInWei = await contract.methods.deposit(weiAmount, config.contract_address).call();
     const usdcAmount = Number(usdcAmountInWei) / 10 ** 6;
 
-    return res.status(200).json({ message: "Transaction successful", data: { usdc_amount: usdcAmount } });
+    return res.status(200).json({ message: "Transaction successful", data: { usdc_amount: usdcAmount, contract_address: config.contract_address } });
   } catch (error) {
     console.error("Error processing approve: ", error);
     return res.status(500).json({ message: "Internal server error" });
