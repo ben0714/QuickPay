@@ -2,14 +2,14 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "This directory contains the backend application for quickPay, powering the web3 frontend and Wallet/Transfer  engine.",
-  "main": "index.ts",
+  "main": "src/server.ts",
   "scripts": {
     "start": "node dist/server.js",
-    "build": "tsc",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",

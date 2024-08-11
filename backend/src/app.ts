@@ -21,5 +21,10 @@ app.use(cors());
 app.use(bodyParserErrorHandler());
 
 app.use("/api", apiRoutes);
+app.use("/", (req, res) => res.send({
+  success: true,
+  message: "OK",
+  result: new Date().toISOString(),
+}));
 
 export default app;

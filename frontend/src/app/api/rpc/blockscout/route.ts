@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Address is required' }, { status: 400 })
   }
 
-  const apiUrl = `https://base.blockscout.com/api?module=account&action=${action}&address=${address}&startblock=0&endblock=99999999&sort=desc`
+  const apiUrl = `https://base-sepolia.blockscout.com/api?module=account&action=${action}&address=${address}&startblock=0&endblock=99999999&sort=desc`
   const apiKey = process.env.BLOCKSCOUT_API_KEY // Ensure you have set this in your environment variables
 
   if (!apiKey) {
