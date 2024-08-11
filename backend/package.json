@@ -9,15 +9,8 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "jest",
-    "build": "rimraf dist && tsc",
-    "ts.check": "tsc --project tsconfig.json",
-    "add-build": "git add dist"
+    "build": "tsc"
   },
-  "pre-commit": [
-    "ts.check",
-    "build",
-    "add-build"
-  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -44,8 +37,6 @@
     "@types/helmet": "^4.0.0",
     "@types/node": "^20.14.10",
     "@types/sequelize": "^4.28.20",
-    "pre-commit": "^1.2.2",
-    "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.3"
