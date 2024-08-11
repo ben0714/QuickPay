@@ -11,6 +11,8 @@ import { scanQR } from '@/app/providers'
 import QRScannerComponent from './qr-reader'
 import { LoadingSpinner } from './loading-spinner'
 import { CSSTransition } from 'react-transition-group'
+import checkCircle from '../../../public/check-circle-filled.png'
+import Image from 'next/image'
 
 interface QrScannerProps {
   hideCamera: any
@@ -20,6 +22,21 @@ export default function QrScanner({ hideCamera }: QrScannerProps) {
   const [isScanned, setIsScanned] = useState(false)
   const [qrResult, setQrResult] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+
+  const [successLoading, setSuccessLoading] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
+
+  const hideCameraAfterDelay = () => {
+    setSuccessLoading(true)
+    const timer = setTimeout(() => {
+      setSuccessLoading(false)
+      setIsSuccess(true)
+    }, 3000)
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }
 
   const handleQr = async (qrdata: any) => {
     setIsLoading(true)
@@ -46,31 +63,54 @@ export default function QrScanner({ hideCamera }: QrScannerProps) {
     }
   }
 
+  const getSuccess = () => {
+    return (
+      <div className="flex flex-col items-center justify-center text-white gap-4 w-full h-full">
+        {successLoading && (
+          <div>
+            <LoadingSpinner />
+            <h1>Confirming transaction</h1>
+          </div>
+        )}
+
+        {isSuccess && (
+          <div className="flex flex-col items-center justify-between w-full h-full">
+            <Image src={checkCircle} alt="successicon" width={60} height={60} />
+            <h1 className="font-medium text-xl text-center">Success!</h1>
+
+            <p className="text-center text-gray-500">You’ve successfully completed your transaction</p>
+            <p onClick={hideCamera}>Back to home {'->'}</p>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  const getTransactionDetails = () => {
+    return (
+      <div className="flex flex-col text-white gap-4 justfiy-between">
+        <h1 className="text-center text-2xl font-medium">$ {qrResult?.data?.usdc_amount}</h1>
+        <div>
+          <h1>MNT amount</h1>
+          <h1 className="text-gray-500">₮ {qrResult?.data?.amount}</h1>
+        </div>
+        <div>
+          <h1>Account number</h1>
+          <h1 className="text-gray-500">{qrResult?.data?.account_num}</h1>
+        </div>
+
+        <Button onClick={hideCameraAfterDelay}>Confirm</Button>
+      </div>
+    )
+  }
+
   return (
     <>
       <CSSTransition in={isScanned} timeout={300} classNames="modal" unmountOnExit>
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4" onClick={handleClickOutside}>
-          <div id="modal" className="bg-primary-blue rounded-lg shadow-lg w-4/5 max-w-md p-6 relative">
+          <div id="modal" className="bg-primary-blue rounded-lg shadow-lg w-4/5 aspect-square max-w-md p-6 relative">
             {isLoading && <LoadingSpinner />}
-            <div className="flex flex-col text-white gap-4">
-              <h1 className="text-center text-2xl font-medium">$ {qrResult?.data?.usdc_amount}</h1>
-              <div>
-                <h1>MNT amount</h1>
-                <h1 className="text-gray-500">₮ {qrResult?.data?.amount}</h1>
-              </div>
-              <div>
-                <h1>Account number</h1>
-                <h1 className="text-gray-500">{qrResult?.data?.account_num}</h1>
-              </div>
-
-              <Button
-                onClick={() => {
-                  hideCamera()
-                }}
-              >
-                Confirm
-              </Button>
-            </div>
+            {!successLoading && isSuccess === false ? getTransactionDetails() : getSuccess()}
           </div>
         </div>
       </CSSTransition>
