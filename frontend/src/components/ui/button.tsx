@@ -10,6 +10,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const variantLookup = {
   default: 'bg-[#5384E2] text-[#FBFDFF]',
   secondary: 'border border-black dark:bg-slate-600',
+  disabled: 'bg-gray-400 text-gray-700 cursor-not-allowed', // Added this for disabled state
 }
 
 export const Button = ({ children, variant, disabled, ...props }: PropsWithChildren<ButtonProps>) => {
@@ -19,7 +20,7 @@ export const Button = ({ children, variant, disabled, ...props }: PropsWithChild
       'hover:scale-105': !disabled,
       'opacity-50 cursor-not-allowed': disabled,
     },
-    variantLookup[variant || 'default'],
+    disabled ? variantLookup['disabled'] : variantLookup[variant || 'default'], // Use the disabled style if disabled
   )
 
   return (

@@ -26,6 +26,7 @@ export const Providers = ({
 }
 
 export async function getEthToUsdRate(): Promise<number> {
+  console.log('got called')
   const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd')
   const data = await response.json()
   return data.ethereum.usd
@@ -45,6 +46,24 @@ export async function getTransactionHistory(address: string, action: string) {
     }
   } catch (error) {
     console.error('Error:', error)
+  }
+}
+
+export async function scanQR(data: any) {
+  console.log('🚀 ~ scanQR ~ data:', data)
+  const url = '/api/rpc/scanqr'
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ qrcode: data }),
+    })
+    const result = await response.json()
+    return result
+  } catch (error) {
+    console.error('Error scanning QR:', error)
   }
 }
 

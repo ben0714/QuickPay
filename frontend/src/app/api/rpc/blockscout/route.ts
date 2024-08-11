@@ -4,13 +4,12 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const address = searchParams.get('address')
   const action = searchParams.get('action')
-  console.log('🚀 ~ GET ~ address:', address)
 
   if (!address) {
     return NextResponse.json({ error: 'Address is required' }, { status: 400 })
   }
 
-  const apiUrl = `https://base.blockscout.com/api?module=account&action=${action}&address=${address}&startblock=0&endblock=99999999&sort=asc`
+  const apiUrl = `https://base.blockscout.com/api?module=account&action=${action}&address=${address}&startblock=0&endblock=99999999&sort=desc`
   const apiKey = process.env.BLOCKSCOUT_API_KEY // Ensure you have set this in your environment variables
 
   if (!apiKey) {
@@ -31,7 +30,6 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await res.json()
-    console.log('🚀 ~ GET ~ data:', data)
     return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json({ error: 'Error fetching transaction history' }, { status: 500 })

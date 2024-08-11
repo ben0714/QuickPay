@@ -20,13 +20,13 @@ const TransactionList: React.FC<TransactionListProps> = ({ address, rate }) => {
   }
 
   if (error) {
-    return <div className="text-white p-4">Error fetching transaction history</div>
+    return <div className="text-white p-4">No transaction found</div>
   }
 
   return (
     <div className="text-white p-4 flex flex-col gap-4">
       <div className="flex justify-between">
-        <p className="">Transactions:</p>
+        <p className="text-lg">Transactions:</p>
         <p className="opacity-40">See detail {'->'} </p>
       </div>
       <ul>
@@ -35,7 +35,7 @@ const TransactionList: React.FC<TransactionListProps> = ({ address, rate }) => {
           const transactionType = isIncoming ? 'income' : 'outcome'
           const valueInUsd = formatValueInUsd(tx.value, rate)
           return (
-            <div>
+            <div className="py-2" key={index}>
               <TransactionComponent key={index} type={transactionType} amount={valueInUsd} />
             </div>
           )
@@ -65,9 +65,9 @@ const TransactionComponent: React.FC<Transaction> = ({ type, amount }) => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-1 justify-end">
+      <div className="flex flex-col gap-1 items-end">
         <p className={type === 'income' ? 'text-green-500' : 'text-red-500'}>
-          {type === 'income' ? '+' : '-'} {amount}
+          {type === 'income' ? '+' : '-'} {amount}$
         </p>
         <p className="text-xs text-gray-500">Transfer</p>
       </div>

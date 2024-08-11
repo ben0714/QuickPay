@@ -1,6 +1,6 @@
 'use client'
 
-import React, { FormEvent } from 'react'
+import React, { FormEvent, useState } from 'react'
 import { useAccount, useLogout, useSendUserOperation, useSmartAccountClient, useUser } from '@alchemy/aa-alchemy/react'
 import { chain, accountType, gasManagerConfig, accountClientOptions as opts } from '@/config'
 import { Card } from './ui/card'
@@ -12,13 +12,21 @@ import Header from './ui/header'
 import TransactionList from './ui/transaction'
 import { useQuery } from '@tanstack/react-query'
 import { getEthToUsdRate } from '@/app/providers'
+import QrScanner from './ui/qr-scanner'
 
 export const ProfileCard = () => {
-  const { data } = useQuery({ queryKey: ['exchange_rate'], queryFn: () => getEthToUsdRate() })
+  const { data } = useQuery({
+    queryKey: ['exchange_rate'],
+    queryFn: () => getEthToUsdRate(),
+    refetchInterval: 1000000,
+    refetchOnWindowFocus: false, // Prevent refetch on window focus
+  })
+
+  const [isScan, setIsScan] = useState(false)
 
   const user = useUser()
   const { address } = useAccount({ type: accountType })
-  const address_temp = '0x72F969f810d832853A9C3838Da9FaE6682650319'
+  const address_temp = '0x5FA2f3b42db545B11977BDC82a7A98e30A285EE2'
 
   const { logout } = useLogout()
 
@@ -51,9 +59,15 @@ export const ProfileCard = () => {
   // [!endregion sending-user-op]
 
   return (
-    <div className="flex flex-col bg-primary-blue min-h-screen w-full gap-3">
-      <Header address={address_temp || ''} rate={data} />
-      <TransactionList address={address_temp || ''} rate={data} />
+    <div className="bg-primary-blue min-h-screen w-full gap-3">
+      {isScan ? (
+        <QrScanner hideCamera={() => setIsScan(false)} />
+      ) : (
+        <div className="flex flex-col gap-3 ">
+          <Header address={address_temp || ''} rate={data} onClick={() => setIsScan(true)} />
+          <TransactionList address={address_temp || ''} rate={data} />
+        </div>
+      )}
     </div>
   )
 }
