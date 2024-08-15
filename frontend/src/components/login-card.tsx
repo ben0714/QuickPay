@@ -3,7 +3,6 @@
 import { useAuthenticate, useSignerStatus } from '@alchemy/aa-alchemy/react'
 import { FormEvent, useCallback, useState } from 'react'
 import { Button } from './ui/button'
-import { Card } from './ui/card'
 import Image from 'next/image'
 import { Input } from './ui/input'
 import logo from '../../public/logo.png'
@@ -46,7 +45,7 @@ export const LogInCard = () => {
               <p className="text-white">Email</p>
               <Input className="w-full rounded p-2" type="email" placeholder="Enter your email" value={email} onChange={onEmailChange} />
             </div>
-            <Button type="submit">Recieve an Email</Button>
+            <Button type="submit">Login</Button>
           </div>
         </form>
       )}
