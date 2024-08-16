@@ -91,23 +91,19 @@ export async function getUSDCBalance(address: string): Promise<string> {
 }
 
 export async function getUSDCTransferHistory(address: string): Promise<any[]> {
-  const settings = {
-    apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
-    network: Network.BASE_SEPOLIA,
-  };
-  const alchemy = new Alchemy(settings);
-
   const usdcAddress = '0x036CbD53842c5426634e7929541eC2318f3dCF7e';
+  const url = `/api/rpc/blockscout?module=account&action=tokentx&address=${address}&contractaddress=${usdcAddress}&sort=desc&page=1&offset=10`;
 
   try {
-    const transfers = await alchemy.core.getAssetTransfers({
-      fromBlock: "0x0",
-      toAddress: address,
-      contractAddresses: [usdcAddress],
-      category: [AssetTransfersCategory.ERC20],
-    });
+    const response = await fetch(url);
+    const data = await response.json();
 
-    return transfers.transfers;
+    if (data.status === '1') {
+      return data.result;
+    } else {
+      console.error('Error fetching USDC transfer history:', data.message);
+      return [];
+    }
   } catch (error) {
     console.error('Error fetching USDC transfer history:', error);
     return [];
