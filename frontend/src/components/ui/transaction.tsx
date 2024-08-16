@@ -1,6 +1,6 @@
 import React from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { getTransactionHistory, getEthToUsdRate } from '@/app/providers'
+import { getUSDCTransferHistory, getEthToUsdRate } from '@/app/providers'
 import { LoadingSpinner } from './loading-spinner'
 import incomeIcon from '../../../public/coins-hand.png'
 import outcomeIcon from '../../../public/building.png'
@@ -13,7 +13,7 @@ interface TransactionListProps {
 }
 
 const TransactionList: React.FC<TransactionListProps> = ({ address, rate }) => {
-  const { data, isLoading, error } = useQuery({ queryKey: ['transactionHistory'], queryFn: () => getTransactionHistory(address, 'txlist') })
+  const { data, isLoading, error } = useQuery({ queryKey: ['usdcTransferHistory'], queryFn: () => getUSDCTransferHistory(address) })
 
   if (isLoading) {
     return <LoadingSpinner />
@@ -33,10 +33,9 @@ const TransactionList: React.FC<TransactionListProps> = ({ address, rate }) => {
         {data?.slice(0, 10)?.map((tx: any, index: any) => {
           const isIncoming = tx.to.toLowerCase() === address.toLowerCase()
           const transactionType = isIncoming ? 'income' : 'outcome'
-          const valueInUsd = formatValueInUsd(tx.value, rate)
           return (
             <div className="py-2" key={index}>
-              <TransactionComponent key={index} type={transactionType} amount={valueInUsd} />
+              <TransactionComponent key={index} type={transactionType} amount={tx.value} />
             </div>
           )
         })}
