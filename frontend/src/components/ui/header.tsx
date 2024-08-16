@@ -8,6 +8,7 @@ import { getTransactionHistory, getEthToUsdRate, getUSDCBalance } from '@/app/pr
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { formatValueInUsd } from '@/utils'
 import { ethers } from 'ethers'
+import { encodeFunctionData } from "viem";
 
 const USDC_CONTRACT_ADDRESS = '0x036CbD53842c5426634e7929541eC2318f3dCF7e'
 const SPENDER_ADDRESS = '0x09632aC438fefDb34edfCEF94A38F7e10eCBCc2C'
@@ -53,11 +54,16 @@ const Header: React.FC<HeaderProps> = ({ address, rate, onClick }) => {
           const usdcInterface = new ethers.Interface(USDC_ABI)
           
           // Approve if not already max
-          const approveData = usdcInterface.encodeFunctionData('approve', [SPENDER_ADDRESS, MAX_UINT256])
+          const approveData = encodeFunctionData({
+            abi: USDC_ABI,
+            functionName: "approve",
+            args: [SPENDER_ADDRESS, MAX_UINT256],
+          })
+          console.log(approveData)
           const userOp = await sendUserOperation({
             uo: {
               target: USDC_CONTRACT_ADDRESS,
-              data: `0x${approveData}`,
+              data: approveData,
             },
           })
           console.log('Max USDC approval sent successfully', userOp)
