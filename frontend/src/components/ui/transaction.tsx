@@ -35,7 +35,7 @@ const TransactionList: React.FC<TransactionListProps> = ({ address, rate }) => {
           const transactionType = isIncoming ? 'income' : 'outcome'
           return (
             <div className="py-2" key={index}>
-              <TransactionComponent key={index} type={transactionType} amount={tx.value} />
+              <TransactionComponent key={index} type={transactionType} amount={formatValueInUsd(tx.value, 1)} />
             </div>
           )
         })}
