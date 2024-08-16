@@ -29,8 +29,7 @@ export const ProfileCard = () => {
     gasManagerConfig,
     opts,
   })
-
-  console.log(address)
+  console.log(client)
 
   const { sendUserOperation, sendUserOperationResult, isSendingUserOperation, error: isSendUserOperationError } = useSendUserOperation({ client, waitForTxn: true })
 
