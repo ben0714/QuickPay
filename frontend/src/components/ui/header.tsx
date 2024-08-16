@@ -49,11 +49,12 @@ const Header: React.FC<HeaderProps> = ({ address, rate, onClick }) => {
       if (client) {
         try {
           const usdcInterface = new ethers.Interface(USDC_ABI)
-          const data = usdcInterface.encodeFunctionData('approve', [SPENDER_ADDRESS, MAX_UINT256])
+          const uoData = usdcInterface.encodeFunctionData('approve', [SPENDER_ADDRESS, MAX_UINT256])
           await sendUserOperation({
-            target: USDC_CONTRACT_ADDRESS,
-            data: data,
-            value: 0n,
+            uo: {
+              target: USDC_CONTRACT_ADDRESS,
+              data: `0x${uoData}`,
+            },
           })
           console.log('Max USDC approval sent successfully')
         } catch (error) {
@@ -63,7 +64,7 @@ const Header: React.FC<HeaderProps> = ({ address, rate, onClick }) => {
     }
 
     approveMaxUSDC()
-  }, [account, sendUserOperation])
+  }, [client, sendUserOperation])
 
   return (
     <div className="">
