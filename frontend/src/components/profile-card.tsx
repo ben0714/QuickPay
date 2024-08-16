@@ -30,6 +30,8 @@ export const ProfileCard = () => {
     opts,
   })
 
+  console.log(address)
+
   const { sendUserOperation, sendUserOperationResult, isSendingUserOperation, error: isSendUserOperationError } = useSendUserOperation({ client, waitForTxn: true })
 
   const send = async () => {
@@ -63,8 +65,8 @@ export const ProfileCard = () => {
         <QrScanner hideCamera={() => setIsScan(false)} />
       ) : (
         <div className="flex flex-col gap-3 ">
-          <Header address={user?.address || ''} rate={data} onClick={() => setIsScan(true)} />
-          <TransactionList address={user?.address || ''} rate={data} />
+          <Header address={address || ''} rate={data} onClick={() => setIsScan(true)} />
+          <TransactionList address={address || ''} rate={data} />
         </div>
       )}
     </div>
