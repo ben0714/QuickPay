@@ -5,7 +5,7 @@ import { PropsWithChildren } from 'react'
 import { config, queryClient } from '@/config'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from 'next-themes'
-import { Alchemy, Network } from 'alchemy-sdk';
+import { Alchemy, Network, AssetTransfersCategory } from 'alchemy-sdk';
 
 // [!region providers]
 export const Providers = ({
@@ -87,6 +87,30 @@ export async function getUSDCBalance(address: string): Promise<string> {
   } catch (error) {
     console.error('Error fetching USDC balance:', error);
     return '0.00';
+  }
+}
+
+export async function getUSDCTransferHistory(address: string): Promise<any[]> {
+  const settings = {
+    apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
+    network: Network.BASE_SEPOLIA,
+  };
+  const alchemy = new Alchemy(settings);
+
+  const usdcAddress = '0x036CbD53842c5426634e7929541eC2318f3dCF7e';
+
+  try {
+    const transfers = await alchemy.core.getAssetTransfers({
+      fromBlock: "0x0",
+      toAddress: address,
+      contractAddresses: [usdcAddress],
+      category: [AssetTransfersCategory.ERC20],
+    });
+
+    return transfers.transfers;
+  } catch (error) {
+    console.error('Error fetching USDC transfer history:', error);
+    return [];
   }
 }
 
