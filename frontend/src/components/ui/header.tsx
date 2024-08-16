@@ -3,8 +3,8 @@ import { useAccount, useLogout, useSendUserOperation, useSmartAccountClient, use
 import { chain, accountType, gasManagerConfig, accountClientOptions as opts } from '@/config'
 import { Button } from './button'
 import Image from 'next/image'
-import qrImage from '../../../public/qr.png' // Adjust the path according to your file structureimport qrImage from '../../../public/qr.png'; // Adjust the path according to your file structure
-import { getTransactionHistory, getEthToUsdRate } from '@/app/providers'
+import qrImage from '../../../public/qr.png'
+import { getTransactionHistory, getEthToUsdRate, getUSDCBalance } from '@/app/providers'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { formatValueInUsd } from '@/utils'
 import Link from 'next/link'
@@ -17,8 +17,10 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ address, rate, onClick }) => {
   const queryClient = useQueryClient()
-  const { data, isLoading, error } = useQuery({ queryKey: ['balance'], queryFn: () => getTransactionHistory(address, 'balance') })
-  const balance = formatValueInUsd(data, rate)
+  const { data: ethBalance, isLoading, error } = useQuery({ queryKey: ['balance'], queryFn: () => getTransactionHistory(address, 'balance') })
+  const { data: usdcBalance } = useQuery({ queryKey: [], queryFn: () => getUSDCBalance(address) })
+  const balance = formatValueInUsd(ethBalance, rate)
+  console.log(address)
 
   return (
     <div className="">
@@ -32,8 +34,8 @@ const Header: React.FC<HeaderProps> = ({ address, rate, onClick }) => {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h1 className="text-lg text-gray-500">Total Balance</h1>
-          <h1 className="text-4xl font-medium">$ {balance}</h1>
+          <h1 className="text-lg text-gray-500">Total USDC Balance</h1>
+          <h1 className="text-4xl font-medium">$ {usdcBalance}</h1>
         </div>
 
         <Button onClick={() => onClick()}>

@@ -5,6 +5,7 @@ import { PropsWithChildren } from 'react'
 import { config, queryClient } from '@/config'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from 'next-themes'
+import { Alchemy, Network } from 'alchemy-sdk';
 
 // [!region providers]
 export const Providers = ({
@@ -64,6 +65,28 @@ export async function scanQR(data: any) {
     return result
   } catch (error) {
     console.error('Error scanning QR:', error)
+  }
+}
+
+export async function getUSDCBalance(address: string): Promise<string> {
+  const settings = {
+    apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
+    network: Network.BASE_SEPOLIA,
+  };
+  const alchemy = new Alchemy(settings);
+
+  const usdcAddress = '0x036CbD53842c5426634e7929541eC2318f3dCF7e';
+
+  try {
+    const balance = await alchemy.core.getTokenBalances(address, [usdcAddress]);
+    const usdcBalance = balance.tokenBalances[0].tokenBalance;
+    
+    // Convert from wei to USDC (6 decimal places)
+    const formattedBalance = (parseInt(usdcBalance || '0') / 1e6).toFixed(2);
+    return formattedBalance;
+  } catch (error) {
+    console.error('Error fetching USDC balance:', error);
+    return '0.00';
   }
 }
 
