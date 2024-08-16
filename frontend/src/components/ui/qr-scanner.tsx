@@ -96,6 +96,10 @@ export default function QrScanner({ hideCamera }: QrScannerProps) {
           <h1 className="text-gray-500">₮ {qrResult?.data?.amount}</h1>
         </div>
         <div>
+          <h1>Bank code</h1>
+          <h1 className="text-gray-500">{qrResult?.data?.bank_code}</h1>
+        </div>
+        <div>
           <h1>Account number</h1>
           <h1 className="text-gray-500">{qrResult?.data?.account_num}</h1>
         </div>

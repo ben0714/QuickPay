@@ -15,8 +15,26 @@ const SPENDER_ADDRESS = '0x09632aC438fefDb34edfCEF94A38F7e10eCBCc2C'
 const MAX_UINT256 = ethers.MaxUint256
 
 const USDC_ABI = [
-  'function approve(address spender, uint256 amount) public returns (bool)',
-  'function allowance(address owner, address spender) view returns (uint256)'
+  {
+    name: 'approve',
+    type: 'function',
+    inputs: [
+      { name: 'spender', type: 'address' },
+      { name: 'amount', type: 'uint256' }
+    ],
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'nonpayable'
+  },
+  {
+    name: 'allowance',
+    type: 'function',
+    inputs: [
+      { name: 'owner', type: 'address' },
+      { name: 'spender', type: 'address' }
+    ],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view'
+  }
 ]
 
 interface HeaderProps {
@@ -51,31 +69,32 @@ const Header: React.FC<HeaderProps> = ({ address, rate, onClick }) => {
     const checkAndApproveUSDC = async () => {
       if (client && !isApproved) {
         try {
-          const usdcInterface = new ethers.Interface(USDC_ABI)
-          
+
           // Approve if not already max
           const approveData = encodeFunctionData({
             abi: USDC_ABI,
             functionName: "approve",
             args: [SPENDER_ADDRESS, MAX_UINT256],
-          })
-          console.log(approveData)
+          });
+
           const userOp = await sendUserOperation({
             uo: {
               target: USDC_CONTRACT_ADDRESS,
               data: approveData,
             },
-          })
-          console.log('Max USDC approval sent successfully', userOp)
-          setIsApproved(true)
+          });
+
+          console.log('Max USDC approval sent successfully', userOp);
+
+          setIsApproved(true);
         } catch (error) {
-          console.error('Error checking/approving USDC:', error)
+          console.error('Error checking/approving USDC:', error);
         }
       }
-    }
+    };
 
-    checkAndApproveUSDC()
-  }, [client, sendUserOperation, address, isApproved])
+    checkAndApproveUSDC();
+  }, [client, sendUserOperation, address, isApproved]);
 
   return (
     <div className="">
