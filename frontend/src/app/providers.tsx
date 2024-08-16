@@ -69,21 +69,21 @@ export async function scanQR(data: any) {
 }
 
 export async function getUSDCBalance(address: string): Promise<string> {
+  const settings = {
+    apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
+    network: Network.BASE_SEPOLIA,
+  };
+  const alchemy = new Alchemy(settings);
+
   const usdcAddress = '0x036CbD53842c5426634e7929541eC2318f3dCF7e';
-  const url = `/api/rpc/blockscout?module=account&action=tokenbalance&contractaddress=${usdcAddress}&address=${address}`;
 
   try {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data.status === '1') {
-      // Convert from wei to USDC (6 decimal places)
-      const formattedBalance = (parseInt(data.result) / 1e6).toFixed(2);
-      return formattedBalance;
-    } else {
-      console.error('Error fetching USDC balance:', data.message);
-      return '0.00';
-    }
+    const balance = await alchemy.core.getTokenBalances(address, [usdcAddress]);
+    const usdcBalance = balance.tokenBalances[0].tokenBalance;
+    
+    // Convert from wei to USDC (6 decimal places)
+    const formattedBalance = (parseInt(usdcBalance || '0') / 1e6).toFixed(2);
+    return formattedBalance;
   } catch (error) {
     console.error('Error fetching USDC balance:', error);
     return '0.00';
