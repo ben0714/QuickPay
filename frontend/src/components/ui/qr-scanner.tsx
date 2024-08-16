@@ -14,6 +14,23 @@ import { LoadingSpinner } from './loading-spinner'
 import { CSSTransition } from 'react-transition-group'
 import checkCircle from '../../../public/check-circle-filled.png'
 import Image from 'next/image'
+import { useSmartAccountClient, useSendUserOperation } from '@alchemy/aa-alchemy/react'
+import { encodeFunctionData } from 'viem'
+
+const QUICKPAY_ADDRESS = '0x09632aC438fefDb34edfCEF94A38F7e10eCBCc2C'
+const QUICKPAY_ABI = [
+  {
+    inputs: [
+      { internalType: 'uint256', name: 'amount', type: 'uint256' },
+      { internalType: 'uint256', name: 'assets', type: 'uint256' },
+      { internalType: 'string', name: 'memo', type: 'string' }
+    ],
+    name: 'receivePayment',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function'
+  }
+] as const
 
 interface QrScannerProps {
   hideCamera: any
@@ -26,16 +43,51 @@ export default function QrScanner({ hideCamera }: QrScannerProps) {
 
   const [successLoading, setSuccessLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [transactionError, setTransactionError] = useState<string | null>(null)
 
-  const hideCameraAfterDelay = () => {
-    setSuccessLoading(true)
-    const timer = setTimeout(() => {
+  const { client } = useSmartAccountClient({
+    type: "MultiOwnerModularAccount",
+  });
+
+  const { sendUserOperation, isSendingUserOperation } = useSendUserOperation({
+    client,
+    onSuccess: ({ hash, request }) => {
+      console.log('User operation sent successfully', hash, request)
       setSuccessLoading(false)
       setIsSuccess(true)
-    }, 3000)
+    },
+    onError: (error) => {
+      console.error('Error sending user operation:', error)
+      setTransactionError('Transaction failed. Please try again.')
+      setSuccessLoading(false)
+    },
+  });
 
-    return () => {
-      clearTimeout(timer)
+  const hideCameraAfterDelay = async () => {
+    if (!client || !qrResult?.data) return;
+
+    setSuccessLoading(true)
+    try {
+      const callData = encodeFunctionData({
+        abi: QUICKPAY_ABI,
+        functionName: 'receivePayment',
+        args: [
+          BigInt(qrResult.data.usdc_amount * 1e6), // Convert to USDC decimals
+          BigInt(qrResult.data.amount * 1e18), // Convert to MNT decimals
+          qrResult.data.bank_code || ''
+        ],
+      });
+
+      await sendUserOperation({
+        uo: {
+          target: QUICKPAY_ADDRESS,
+          data: callData,
+        },
+      });
+    } catch (error) {
+      console.error('Failed to send user operation:', error)
+      setTransactionError('Failed to send transaction. Please try again.')
+      setSuccessLoading(false)
     }
   }
 
@@ -79,7 +131,7 @@ export default function QrScanner({ hideCamera }: QrScannerProps) {
             <Image src={checkCircle} alt="successicon" width={60} height={60} />
             <h1 className="font-medium text-xl text-center">Success!</h1>
 
-            <p className="text-center text-gray-500">You’ve successfully completed your transaction</p>
+            <p className="text-center text-gray-500">You've successfully completed your transaction</p>
             <p onClick={hideCamera}>Back to home {'->'}</p>
           </div>
         )}
@@ -104,7 +156,10 @@ export default function QrScanner({ hideCamera }: QrScannerProps) {
           <h1 className="text-gray-500">{qrResult?.data?.account_num}</h1>
         </div>
 
-        <Button onClick={hideCameraAfterDelay}>Confirm</Button>
+        {transactionError && <p className="text-red-500">{transactionError}</p>}
+        <Button onClick={hideCameraAfterDelay} disabled={isSendingUserOperation || !client}>
+          {isSendingUserOperation ? 'Processing...' : 'Confirm'}
+        </Button>
       </div>
     )
   }
