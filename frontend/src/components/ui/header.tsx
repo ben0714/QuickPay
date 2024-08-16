@@ -14,7 +14,8 @@ const SPENDER_ADDRESS = '0x09632aC438fefDb34edfCEF94A38F7e10eCBCc2C'
 const MAX_UINT256 = ethers.MaxUint256
 
 const USDC_ABI = [
-  'function approve(address spender, uint256 amount) public returns (bool)'
+  'function approve(address spender, uint256 amount) public returns (bool)',
+  'function allowance(address owner, address spender) view returns (uint256)'
 ]
 
 interface HeaderProps {
@@ -42,29 +43,33 @@ const Header: React.FC<HeaderProps> = ({ address, rate, onClick }) => {
       console.error('Error sending user operation:', error)
     },
   });
-  
+
+  const [isApproved, setIsApproved] = React.useState(false)
 
   useEffect(() => {
-    const approveMaxUSDC = async () => {
-      if (client) {
+    const checkAndApproveUSDC = async () => {
+      if (client && !isApproved) {
         try {
           const usdcInterface = new ethers.Interface(USDC_ABI)
-          const uoData = usdcInterface.encodeFunctionData('approve', [SPENDER_ADDRESS, MAX_UINT256])
-          await sendUserOperation({
+          
+          // Approve if not already max
+          const approveData = usdcInterface.encodeFunctionData('approve', [SPENDER_ADDRESS, MAX_UINT256])
+          const userOp = await sendUserOperation({
             uo: {
               target: USDC_CONTRACT_ADDRESS,
-              data: `0x${uoData}`,
+              data: `0x${approveData}`,
             },
           })
-          console.log('Max USDC approval sent successfully')
+          console.log('Max USDC approval sent successfully', userOp)
+          setIsApproved(true)
         } catch (error) {
-          console.error('Error approving USDC:', error)
+          console.error('Error checking/approving USDC:', error)
         }
       }
     }
 
-    approveMaxUSDC()
-  }, [client, sendUserOperation])
+    checkAndApproveUSDC()
+  }, [client, sendUserOperation, address, isApproved])
 
   return (
     <div className="">
